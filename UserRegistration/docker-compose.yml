@@ -1,0 +1,48 @@
+version: '3.4'
+
+networks:
+  user-network:
+
+services:
+  user-servicedb:
+    container_name: auth-db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+     - 8002:1433
+    environment:
+     - ACCEPT_EULA=Y
+     - MSSQL_SA_PASSWORD=Root123#s
+    networks:
+     - user-network
+
+  userregistration:
+    image: ${DOCKER_REGISTRY-}userregistration
+    build:
+      context: .
+      dockerfile: UserRegistration/Dockerfile
+    environment:
+     - ASPNETCORE_ENVIRONMENT=Development
+     - ASPNETCORE_URLS=https://+:443;http://+:80
+     - ASPNETCORE_Kestrel__Certificates__Default__Password=Atykonyak1#
+     - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/HttpsCertificateoutput.pfx
+
+    volumes:
+     - C:/Users/ATI/.dotnet/https:/https:ro
+    ports:
+     - 8080:80
+  
+    depends_on:
+     - user-servicedb
+    networks:
+     - user-network
+  
+
+
+
+
+
+
+
+      
+
+
